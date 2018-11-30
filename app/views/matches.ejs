@@ -1,0 +1,28 @@
+<%- include('header') %>
+<%- include('navbar') %>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+    <title><%= title %></title>
+</head>
+<body>
+
+
+<br>
+Best survey matches for <strong><%= username %></strong> best-to-worst:
+
+<ul>   
+    <% count = 0 %>
+    <% for(var i = 0; i < matches.length; i++) { count++;%>
+        <li>User <strong><%= matches[i]['username'] %></strong> matches <strong><%= matches[i]['count'] %></strong> answers.</li>
+    <% } %>
+    
+    <% if(count == 0){ %>
+        <li>No matches found</li>
+    <% } %>
+</ul>
+
+</body>
+</html>
+<%- include('footer') %>

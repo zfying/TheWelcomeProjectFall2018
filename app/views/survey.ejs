@@ -1,0 +1,88 @@
+<%- include('header') %>
+<%- include('navbar') %>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+    <title><%= title %></title>
+</head>
+<body>
+
+
+Survey Page <%= id %><br><br>
+Welcome User <%= username %><br><br>
+
+<a href="../preferences">Set your rendering preferences</a><br><br>
+
+
+<form action="../survey" method="post">
+    
+    <strong><%= questions[--id].question %></strong><br>
+    <% for(var i=0; i < questions[id].options.length; i++) { %>
+
+        <% if(typeof answers !== 'undefined') { %>
+            <% if(typeof answers[id] !== 'undefined') { %>
+                <% var isChecked = '' %>
+                <% if(i == answers[id]){ %>
+                    <% isChecked = 'checked'  %>    
+                <% } %>
+            <% } %>
+        <% } %>
+        <label><input type="radio" name="answer" value="<%= i %>" <%= isChecked  %>> <%= questions[id].options[i] %></label> <%- pref == 1 ? "<br>" : "" %>
+    <% } %>
+
+    <br>
+    <input type="hidden" name="id" value="<%= ++id %>"></input>
+    <input type="hidden" name="isLast" value="<%= isLast %>"></input>
+
+    <% if(id > 1){ %>
+    <input type="submit" name="submit" value="previous">
+    <% } %>    
+    <input type="submit" name="submit" value="next">
+
+</form>
+
+<script type="text/javascript">
+
+    // Survey Timer
+    var startTime = getCookie('starttime'); // timestamp of user login
+    var currentTime = new Date().getTime(); // current time
+    var timeDiff = 30000 - (currentTime - startTime); // get the time left on the survey
+        
+    if(timeDiff > 0){
+
+        // set the timer for time left
+        setTimeout(function() {
+            window.location.href = "/expired"; // expire the survey if time elapses
+        }, timeDiff);
+
+    }else{
+        window.location.href = "/expired";
+    }
+
+    // read a cookie by name
+    // By Craig Smedley: http://stackoverflow.com/a/22852843
+    function getCookie(cookieName) {
+        var cookieVal = " " + document.cookie;
+        var cookieStart = cookieVal.indexOf(" " + cookieName + "=");
+        if (cookieStart == -1) {
+            cookieVal = null;
+        }
+        else {
+            cookieStart = cookieVal.indexOf("=", cookieStart) + 1;
+            var cookieEnd = cookieVal.indexOf(";", cookieStart);
+            if (cookieEnd == -1) {
+                cookieEnd = cookieVal.length;
+            }
+            cookieVal = unescape(cookieVal.substring(cookieStart,cookieEnd));
+        }
+        return cookieVal;
+    }
+
+</script>
+
+</body>
+</html>
+
+<%- include('footer') %>

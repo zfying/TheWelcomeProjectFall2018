@@ -1,0 +1,27 @@
+<%- include('header') %>
+<%- include('navbar') %>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+    <title><%= title %></title>
+</head>
+<body>
+
+<p>
+Your current rendering preference is <em><%= pref == 1 ? "vertical" : 'horizontal' %></em>
+</p>
+
+<form method="post" action="./preferences">
+    <input type="radio" name="preference" value="0" <%= pref == 0 ? "checked" : "" %>></input>horizontal<br/>
+    <input type="radio" name="preference" value="1" <%= pref == 1 ? "checked" : "" %>></input>vertical<br/>
+    <input type="submit" name="submit" value="ok"/>
+</form>
+
+
+
+</body>
+</html>
+
+<%- include('footer') %>
