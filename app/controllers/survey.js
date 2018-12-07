@@ -125,6 +125,12 @@ module.exports = {
         // write answers to JSON and sends to the next/prev page
         answers = JSON.stringify(answers, null, 4);
         
+        client.query('INSERT INTO "Sample" "Q1" VALUES '+answers, function(err, result) {
+            if(err) {
+              return console.error('error running query', err);
+            }
+        });
+
         fs.writeFile("./files/surveyanswers.json", answers , function(err) {
             if(err) {
                 throw err;

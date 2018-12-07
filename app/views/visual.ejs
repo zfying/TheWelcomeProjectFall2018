@@ -1,33 +1,121 @@
 <%- include('header') %>
 <%- include('navbar') %>
 
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+
+</head>
+<body>
+
+<canvas id="myChart" width="400" height="400"></canvas>
+<script>
+var ctx = document.getElementById("myChart").getContext('2d');
+var myChart = new Chart(ctx, {
+    type: 'horizontalBar',
+    data: {
+        labels: <%- JSON.stringify(labellist); %>,
+        datasets: [{
+            label: 'LOW',
+            data: <%- JSON.stringify(datalist); %>,
+            backgroundColor: "rgba(255,205,12,0.2)"
+        }, {
+            label: 'HIGH',
+            backgroundColor: "rgba(10,99,132,0.2)",
+            data: <%- JSON.stringify(datalist_high); %>,
+        }]
+    },
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero:true
+                },
+                stacked: true
+            }],
+            xAxes: [{
+                stacked: true
+            }]
+        }
+    }
+});
+</script>
+
 <div class="container">
   <div class=container>
-    <h1 class="display-4">Visualization of Sample Data</h1>
-      <script type="text/javascript">
-        var chart = new EJSC.Chart("myChart4a", {
-          show_legend: false
-        } );
-          
-        var mySeries = new EJSC.BarSeries(
-          new EJSC.ArrayDataHandler([[1,"Widgets"],[2,"Gizmos"],[3,"Doodads"],[4,"Thingies"]]) , {
-              orientation: "horizontal",
-              intervalOffset: .5,
-              useColorArray: true
-          }
-        );
+    
+    <h1 class="display-4">Best students</h1>
+    <table class="table table-striped table-dark">
+      <thead>
+        <tr>
+          <th scope="col">id</th>
+          <th scope="col">score</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% best_student_sets.forEach(state => { %>
+          <tr>
+              <th scope="row"><%- state.id %></th>
+              <td><%- state.score %></td>
+          </tr>
+
+        <% }) %>
         
-        mySeries.x_axis_formatter = new EJSC.NumberFormatter({
-            forced_decimals: 2
-        } );
+      </tbody>
+    </table>
+
+    <h1 class="display-4">Worst students</h1>
+    <table class="table table-striped table-dark">
+      <thead>
+        <tr>
+          <th scope="col">id</th>
+          <th scope="col">score</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% worst_student_sets.forEach(state => { %>
+          <tr>
+              <th scope="row"><%- state.id %></th>
+              <td><%- state.score %></td>
+          </tr>
+
+        <% }) %>
         
-        mySeries.y_axis_formatter = new EJSC.NumberFormatter({
-            forced_decimals: 2
-        } );
-      
-        chart.addSeries(mySeries);
-      </script>
+      </tbody>
+    </table>
+
+    <h1 class="display-4">Counts data</h1>
+    <table class="table table-striped table-dark">
+      <thead>
+        <tr>
+          <th scope="col">id#</th>
+          <th scope="col">Low</th>
+          <th scope="col">High</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% data_sets.forEach(state => { %>
+          <tr>
+              <th scope="row"><%- state.id %></th>
+              <td><%- state.low %></td>
+              <td><%- state.high %></td>
+          </tr>
+
+        <% }) %>
+        
+      </tbody>
+    </table>
+
+
   </div>
 </div>
+
+
+
+
+
+</body>
+</html>
 
 <%- include('footer') %>
