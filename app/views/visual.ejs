@@ -11,42 +11,46 @@
 
 <canvas id="myChart" width="400" height="400"></canvas>
 <script>
-var ctx = document.getElementById("myChart").getContext('2d');
-var myChart = new Chart(ctx, {
-    type: 'horizontalBar',
-    data: {
-        labels: <%- JSON.stringify(labellist); %>,
-        datasets: [{
-            label: 'LOW',
-            data: <%- JSON.stringify(datalist); %>,
-            backgroundColor: "rgba(255,205,12,0.2)"
-        }, {
-            label: 'HIGH',
-            backgroundColor: "rgba(10,99,132,0.2)",
-            data: <%- JSON.stringify(datalist_high); %>,
-        }]
-    },
-    options: {
-        scales: {
-            yAxes: [{
-                ticks: {
-                    beginAtZero:true
-                },
-                stacked: true
-            }],
-            xAxes: [{
-                stacked: true
+    var ctx = document.getElementById("myChart").getContext('2d');
+    var myChart = new Chart(ctx, {
+        type: 'horizontalBar',
+        data: {
+            labels: <%- JSON.stringify(labellist); %>,
+            datasets: [{
+                label: 'LOW',
+                data: <%- JSON.stringify(datalist[0]); %>,
+                backgroundColor: "rgba(255,0,0,0.2)"
+            }, {
+                label: 'MEDIUM',
+                backgroundColor: "rgba(0,255,0,0.2)",
+                data: <%- JSON.stringify(datalist[1]); %>,
+            }, {
+                label: 'HIGH',
+                backgroundColor: "rgba(0,0,255,0.2)",
+                data: <%- JSON.stringify(datalist[2]); %>,
             }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero:true
+                    },
+                    stacked: true
+                }],
+                xAxes: [{
+                    stacked: true
+                }]
+            }
         }
-    }
-});
+    });
 </script>
 
 <div class="container">
   <div class=container>
     
     <h1 class="display-4">Best students</h1>
-    <table class="table table-striped table-dark">
+    <table class="table table-striped">
       <thead>
         <tr>
           <th scope="col">id</th>
@@ -65,8 +69,34 @@ var myChart = new Chart(ctx, {
       </tbody>
     </table>
 
+    <canvas id="best_student_visualization" width="400" height="400"></canvas>
+    <script>
+        var ctx = document.getElementById("best_student_visualization").getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'horizontalBar',
+            data: {
+                labels: <%- JSON.stringify(selected_students[0][0]); %>,
+                datasets: [{
+                    label: 'score',
+                    data: <%- JSON.stringify(selected_students[0][1]); %>,
+                    backgroundColor: "rgba(20,100,20,0.2)"
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero:true
+                        }
+                    }]
+                }
+            }
+        });
+    </script>
+
+
     <h1 class="display-4">Worst students</h1>
-    <table class="table table-striped table-dark">
+    <table class="table table-striped">
       <thead>
         <tr>
           <th scope="col">id</th>
@@ -85,12 +115,39 @@ var myChart = new Chart(ctx, {
       </tbody>
     </table>
 
+    <canvas id="worst_student_visualization" width="400" height="400"></canvas>
+    <script>
+        var ctx = document.getElementById("worst_student_visualization").getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'horizontalBar',
+            data: {
+                labels: <%- JSON.stringify(selected_students[1][0]); %>,
+                datasets: [{
+                    label: 'score',
+                    data: <%- JSON.stringify(selected_students[1][1]); %>,
+                    backgroundColor: "rgba(100,20,100,0.2)"
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero:true
+                        }
+                    }]
+                }
+            }
+        });
+    </script>
+
+
     <h1 class="display-4">Counts data</h1>
-    <table class="table table-striped table-dark">
+    <table class="table table-striped">
       <thead>
         <tr>
           <th scope="col">id#</th>
           <th scope="col">Low</th>
+          <th scope="col">Medium</th>
           <th scope="col">High</th>
         </tr>
       </thead>
@@ -99,6 +156,7 @@ var myChart = new Chart(ctx, {
           <tr>
               <th scope="row"><%- state.id %></th>
               <td><%- state.low %></td>
+              <td><%- state.medium %></td>
               <td><%- state.high %></td>
           </tr>
 

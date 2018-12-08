@@ -36,6 +36,60 @@ var client = new pg.Client({
   ssl:true
 });
 
+// function convertArrayOfObjectsToCSV(args) {  
+//   var result, ctr, keys, columnDelimiter, lineDelimiter, data;
+
+//   data = args.data || null;
+//   if (data == null || !data.length) {
+//       return null;
+//   }
+
+//   columnDelimiter = args.columnDelimiter || ',';
+//   lineDelimiter = args.lineDelimiter || '\n';
+
+//   keys = Object.keys(data[0]);
+
+//   result = '';
+//   result += keys.join(columnDelimiter);
+//   result += lineDelimiter;
+
+//   data.forEach(function(item) {
+//       ctr = 0;
+//       keys.forEach(function(key) {
+//           if (ctr > 0) result += columnDelimiter;
+
+//           result += item[key];
+//           ctr++;
+//       });
+//       result += lineDelimiter;
+//   });
+
+//   return result;
+// }
+// function downloadCSV(args) {  
+//     var data, filename, link;
+//     var csv = convertArrayOfObjectsToCSV({
+//         data: args.json_data
+//     });
+//     if (csv == null) return;
+
+//     filename = args.filename || 'export.csv';
+
+//     if (!csv.match(/^data:text\/csv/i)) {
+//         csv = 'data:text/csv;charset=utf-8,' + csv;
+//     }
+//     data = encodeURI(csv);
+
+//     if (typeof document !== 'undefined') {
+//       ... use document
+//     }
+//     link = document.createElement('a');
+//     link.setAttribute('href', data);
+//     link.setAttribute('download', filename);
+//     link.click();
+// }
+
+
 client.connect(function(err) {
   if(err) {
     return console.error('could not connect to postgres', err);
@@ -69,6 +123,8 @@ app.get('/visual', (req, res) => {
       return console.error('error running query', err);
     }
     let sample_info = result.rows;
+    // downloadCSV({json_data:sample_info, filename:"export.csv"});
+
     // get counts & labels & data
     counts = {};
     counts_for_student = {};
@@ -78,26 +134,34 @@ app.get('/visual', (req, res) => {
       var score = 0;
       for(key in obj){
         if(key!="id"){
-          if(obj[key]>='3'){
+          // for high
+          if(obj[key]=='5'){
             if(counts[key]==null){
-              counts[key] = [0,1];
+              counts[key] = [0,0,1];
             }
             else{
-              counts[key][1] +=1 ;
+              counts[key][2] +=1 ;
             }
           }
-          else{
+          // for low
+          else if(obj[key]=='1'){
             if(counts[key]==null){
-              counts[key] = [1,0];
+              counts[key] = [1,0,0];
             }
             else{
               counts[key][0] +=1 ;
             }
           }
+          // for medium
+          else{
+            if(counts[key]==null){
+              counts[key] = [0,1,0];
+            }
+            else{
+              counts[key][1] +=1 ;
+            }
+          }
           if(obj[key]!=null)score = score + parseInt(obj[key]);
-        }
-        else{
-          name = obj["id"];
         }
       }
       counts_for_student[name] = score;
@@ -105,34 +169,40 @@ app.get('/visual', (req, res) => {
     // normalization & change format
     count_list = [];
     label_list = [];
-    data_list = [];
-    data_list_high = []
+    data_list = [[],[],[]];
     for(key in counts){
       // reconstruct into dictionary
       dict = {};
       dict["id"] = key;
-      var sum_count = counts[key][0]+counts[key][1]
+      var sum_count = counts[key][0]+counts[key][1]+counts[key][2];
       dict["low"] = counts[key][0] / sum_count;
-      dict["high"] = counts[key][1] / sum_count;
+      dict['medium'] = counts[key][1] / sum_count;
+      dict["high"] = counts[key][2] / sum_count;
       count_list.push(dict);
       label_list.push(key);
-      data_list.push(dict["low"]);
-      data_list_high.push(dict["high"]);
+      data_list[0].push(dict["low"]);
+      data_list[1].push(dict["medium"]);
+      data_list[2].push(dict["high"]);
     }
 
-    // get best&worest students
+    // sort counts_for_student
     var items = Object.keys(counts_for_student).map(function(key) {
       return [key,counts_for_student[key]]
     });
     items.sort(function(first, second) {
       return second[1] - first[1];
     });
+    // get best&worest students
+    var selected_students = [ [[],[]] , [[],[]] ];
     var best_student = [];
     for(var i = 0;i<5;i++){
       var dict = {};
       dict["id"] = items[i][0];
       dict["score"] = items[i][1];
       best_student.push(dict);
+
+      selected_students[0][0].push(items[i][0]);
+      selected_students[0][1].push(items[i][1]);
     }
     var worst_student = [];
     for(var i = items.length-5;i<items.length;i++){
@@ -140,13 +210,16 @@ app.get('/visual', (req, res) => {
       dict["id"] = items[i][0];
       dict["score"] = items[i][1];
       worst_student.push(dict);
+
+      selected_students[1][0].push(items[i][0]);
+      selected_students[1][1].push(items[i][1]);
     }
 
     console.log(result.rows);
-    console.log(counts_for_student);
+    console.log(selected_students);
     console.log(best_student);
     console.log(worst_student);
-    res.render('visual', {data_sets: count_list, best_student_sets:best_student, worst_student_sets: worst_student, labellist : label_list , datalist : data_list, datalist_high: data_list_high});
+    res.render('visual', {data_sets: count_list, best_student_sets:best_student, worst_student_sets: worst_student, labellist : label_list , datalist : data_list, selected_students:selected_students});
   });
 });
 
