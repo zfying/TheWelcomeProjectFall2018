@@ -8,8 +8,6 @@ module.exports = {
         var username = req.session.username;
 
         if(typeof(username) != 'undefined') {
-            
-
             fs.readFile('./files/surveyquestions.json', 'utf8', function (err, data) {
                 if (err) throw err;
                 var questions = JSON.parse(data);
@@ -118,8 +116,6 @@ module.exports = {
         }else{
             res.send('Error! You took more than 30 seconds to fill the survey. Go back to the <a href="/">homepage</a> and retake it');
         }
-
-
     },
     writeAnswers: function(isLast, id, res, answers){
         // write answers to JSON and sends to the next/prev page
@@ -131,9 +127,8 @@ module.exports = {
             } 
             else {
                 if(isLast == 'true'){
-                    res.render('success', {
-                        title: 'Survey Completed'
-                    });
+                    res.redirect('/success');
+                    
                 }else{
                     res.redirect('/survey/'+id);
                 }                

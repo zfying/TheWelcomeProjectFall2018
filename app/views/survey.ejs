@@ -1,5 +1,5 @@
 <%- include('header') %>
-<%- include('navbar') %>
+<%- include('navbar_index') %>
 
 <!DOCTYPE html>
 <html>
@@ -10,39 +10,93 @@
 </head>
 <body>
 
+<div class="container" id="cnt1">
+    <div class="col-md-3">
+    </div>
 
-Survey Page <%= id %><br><br>
-Welcome User <%= username %><br><br>
+    <div class="col-md-6" id="panel1">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    <span class="fa fa-question-circle">Welcome Student <%= username %></span></h3>
+            </div>
+            <strong>Student Survey Page <%= id %></strong> <br>
+            <strong><%= questions[--id].question %></strong>
+            <form action="../survey" method="post">
+                <!-- options -->
+                <div class="panel-body">
 
-<a href="../preferences">Set your rendering preferences</a><br><br>
+                    <% for(var i=0; i < questions[id].options.length; i++) { %>
+                        <% if(typeof answers !== 'undefined') { %>
+                            <% if(typeof answers[id] !== 'undefined') { %>
+                                <% var isChecked = '' %>
+                                <% if(i == answers[id]){ %>
+                                    <% isChecked = 'checked'  %>    
+                                <% } %>
+                            <% } %>
+                        <% } %>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="well well-sm">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="radio" name="answer" value="<%= i %>" <%= isChecked  %>> <%= questions[id].options[i] %>
+                                        </label><%- pref == 1 ? "<br>" : "" %>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <% } %>
+                </div>
+                <!-- hidden -->
+                <input type="hidden" name="id" value="<%= ++id %>"></input>
+                <input type="hidden" name="isLast" value="<%= isLast %>"></input>
+                <!-- button -->
+                <div class="panel-footer">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <% if(id > 1){ %>
+                            <input type="submit" class="form-control" name="submit" value="previous">
+                            <% } %>    
+                            <input type="submit" class="form-control" name="submit" value="next">
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    #cnt1 {
+        background-color: rgba(200, 200, 200, 0.2);
+        margin-bottom: 70px;
+    }
+
+    #panel1 {
+        padding:20px;
+    }
+
+    .panel-body:not(.two-col) {
+        padding: 0px;
+    }
+
+    .panel-body .radio, .panel-body .checkbox {
+        margin-top: 0px;
+        margin-bottom: 0px;
+    }
+
+    .panel-body .list-group {
+        margin-bottom: 0;
+    }
+
+    .margin-bottom-none {
+        margin-bottom: 0;
+    }
+</style>
 
 
-<form action="../survey" method="post">
-    
-    <strong><%= questions[--id].question %></strong><br>
-    <% for(var i=0; i < questions[id].options.length; i++) { %>
 
-        <% if(typeof answers !== 'undefined') { %>
-            <% if(typeof answers[id] !== 'undefined') { %>
-                <% var isChecked = '' %>
-                <% if(i == answers[id]){ %>
-                    <% isChecked = 'checked'  %>    
-                <% } %>
-            <% } %>
-        <% } %>
-        <label><input type="radio" name="answer" value="<%= i %>" <%= isChecked  %>> <%= questions[id].options[i] %></label> <%- pref == 1 ? "<br>" : "" %>
-    <% } %>
-
-    <br>
-    <input type="hidden" name="id" value="<%= ++id %>"></input>
-    <input type="hidden" name="isLast" value="<%= isLast %>"></input>
-
-    <% if(id > 1){ %>
-    <input type="submit" name="submit" value="previous">
-    <% } %>    
-    <input type="submit" name="submit" value="next">
-
-</form>
 
 <script type="text/javascript">
 

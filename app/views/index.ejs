@@ -1,5 +1,5 @@
 <%- include('header') %>
-<%- include('navbar') %>
+<%- include('navbar_index') %>
 
 <!DOCTYPE html>
 <html>
@@ -9,16 +9,29 @@
 </head>
 <body>
 
-<p>
-<em>SER422 MVC Ex Landing Page</em>
-</p>
 
-<form action="./matches" method="post">
-  Username: <input type="text" name="username" size="10"/><br/><br/>
-  <input type="submit" name="action" value="Log in"/>
-  <input type="submit" name="action" value="survey"/>
-  <input type="submit" name="action" value="match"/>
-</form>
+
+<div class="container">
+	<div class="login-form">
+		<div class="main-div">
+			<div class="panel">
+				<h2>Login</h2>
+				<p>Please enter your name</p>
+		   	</div>
+
+		   	<form action="./matches" method="post">
+		   		<div class="form-group">
+		   			<input type="text" class="form-control" name="username" placeholder="Name"/>
+		        </div>
+				<div class="form-group">
+		        	<input type="submit" class="form-control" name="action" value="Enter"/>
+		        </div>
+			</form>
+		</div>
+		<p class="botto-text">Designed by D4D</p>
+	</div>
+</div>
+
 
 
 </body>
